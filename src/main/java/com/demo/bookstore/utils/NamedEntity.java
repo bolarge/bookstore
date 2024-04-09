@@ -1,5 +1,6 @@
-package com.demo.bookstore;
+package com.demo.bookstore.utils;
 
+import com.demo.bookstore.utils.BaseEntity;
 import jakarta.persistence.MappedSuperclass;
 import lombok.NoArgsConstructor;
 

@@ -1,6 +1,6 @@
 package com.demo.bookstore.crm;
 
-import com.demo.bookstore.BaseEntity;
+import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -26,7 +26,7 @@ public class User extends BaseEntity {
 	private String lastName;
 	private String mobilePhone;
 	@Enumerated(EnumType.STRING)
-	private UserType userType = UserType.Customer;
+	private UserType userType = UserType.CUSTOMER;
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Role.class)
@@ -42,6 +42,12 @@ public class User extends BaseEntity {
 		this.lastName = lastName;
 		this.mobilePhone = mobilePhone;
 		this.userType = userType;
+	}
+
+	public User(String firstName, String lastName, String email) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
 	}
 
 	@JsonIgnore

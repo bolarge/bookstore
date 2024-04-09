@@ -1,13 +1,11 @@
 package com.demo.bookstore.inventory;
 
-import com.demo.bookstore.BaseEntity;
+import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
@@ -18,10 +16,17 @@ import java.util.HashSet;
 @Entity
 @Table(name = "authors")
 public class Author extends BaseEntity {
-    private String firstName;
-    private String lastName;
+
+    @Column(unique = true)
+    private String name;
+    @Column(unique = true)
+    private String email;
     private String bio;
     private String websiteUrl;
 
-    //private Collection<Book> authorsTitle = new HashSet<>();
+    public Author(String name, String email, String bio) {
+        this.name = name;
+        this.email = email;
+        this.bio = bio;
+    }
 }

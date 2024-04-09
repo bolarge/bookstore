@@ -1,6 +1,6 @@
 package com.demo.bookstore.crm;
 
-import com.demo.bookstore.BaseEntity;
+import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;

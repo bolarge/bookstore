@@ -1,4 +1,4 @@
-package com.demo.bookstore;
+package com.demo.bookstore.utils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
