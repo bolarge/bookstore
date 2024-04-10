@@ -4,8 +4,8 @@ import com.demo.bookstore.inventory.*;
 import com.demo.bookstore.utils.GenericResponse;
 
 public interface InventoryService {
-    GenericResponse<AuthorRecord> createAuthor(AuthorRecord authorRecord);
-    GenericResponse<BookRecord> stockUpBooks(BookRecord bookRecord);
+    GenericResponse<AuthorRequest> createAuthor(AuthorRequest authorRequest);
+    GenericResponse<BookRequest> stockUpBooks(BookRequest bookRequest);
     Author findByAuthorName(String authorName);
     Book findBookByTitle(String title);
     Book findBookByGenre(BookGenre bookGenre);

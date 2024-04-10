@@ -1,6 +1,6 @@
 package com.demo.bookstore.inventory.controller;
 
-import com.demo.bookstore.inventory.AuthorRecord;
+import com.demo.bookstore.inventory.AuthorRequest;
 import com.demo.bookstore.inventory.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class AuthorController {
     private final InventoryService inventoryService;
 
     @PostMapping("")
-    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorRecord authorRecord){
-        var requestResponse = inventoryService.createAuthor(authorRecord);
+    public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorRequest authorRequest){
+        var requestResponse = inventoryService.createAuthor(authorRequest);
         HttpHeaders responseHeaders = new HttpHeaders();
         URI newAuthorUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(requestResponse.getData().id()).toUri();
         responseHeaders.setLocation(newAuthorUri);

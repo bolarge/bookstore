@@ -16,12 +16,12 @@ public class InventoryServiceImpl implements InventoryService{
     private final InventoryRepository inventoryRepository;
 
     @Override
-    public GenericResponse<AuthorRecord> createAuthor(AuthorRecord authorRecord) {
+    public GenericResponse<AuthorRequest> createAuthor(AuthorRequest authorRequest) {
 
-        var newAuthor = new Author(authorRecord.name(),authorRecord.email(), authorRecord.bio());
+        var newAuthor = new Author(authorRequest.name(), authorRequest.email(), authorRequest.bio());
         newAuthor = authorRepository.save(newAuthor);
-        var requestResponse = new GenericResponse<AuthorRecord>();
-        var savedAuthorRecord = new AuthorRecord(newAuthor.getName(), newAuthor.getEmail(),
+        var requestResponse = new GenericResponse<AuthorRequest>();
+        var savedAuthorRecord = new AuthorRequest(newAuthor.getName(), newAuthor.getEmail(),
                 newAuthor.getBio(),newAuthor.getId(),newAuthor.getWebsiteUrl());
 
         requestResponse.setData(savedAuthorRecord);
@@ -30,20 +30,20 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public GenericResponse<BookRecord> stockUpBooks(BookRecord bookRecord) {
-        var bookAuthor = findByAuthorName(bookRecord.author());
-        var newBook = new Book(bookRecord.title(), bookRecord.isbn(), bookRecord.publicationYear(),
-                BookGenre.valueOf(bookRecord.genre().toUpperCase()), bookAuthor);
+    public GenericResponse<BookRequest> stockUpBooks(BookRequest bookRequest) {
+        var bookAuthor = findByAuthorName(bookRequest.author());
+        var newBook = new Book(bookRequest.title(), bookRequest.isbn(), bookRequest.publicationYear(),
+                BookGenre.valueOf(bookRequest.genre().toUpperCase()), bookAuthor);
         newBook = bookRepository.save(newBook);
 
-        var freshStock = new Inventory(bookRecord.title(), bookRecord.itemDescription(), bookRecord.purchaseOrderId(),
-                bookRecord.quantity(), newBook, InventoryStatus.AVAILABLE);
+        var freshStock = new Inventory(bookRequest.title(), bookRequest.itemDescription(), bookRequest.purchaseOrderId(),
+                bookRequest.quantity(), newBook, InventoryStatus.AVAILABLE);
         freshStock = inventoryRepository.save(freshStock);
 
-        var requestResponse = new GenericResponse<BookRecord>();
+        var requestResponse = new GenericResponse<BookRequest>();
 
-        var bRecord = new BookRecord(newBook.getTitle(), newBook.getIsbn(), newBook.getPublicationYear().toString(), newBook.getBookGenre().toString(),
-                freshStock.getItemQty(), bookRecord.author(), bookRecord.purchaseOrderId(), newBook.getId(), bookRecord.itemDescription());
+        var bRecord = new BookRequest(newBook.getTitle(), newBook.getIsbn(), newBook.getPublicationYear().toString(), newBook.getBookGenre().toString(),
+                freshStock.getItemQty(), bookRequest.author(), bookRequest.purchaseOrderId(), newBook.getId(), bookRequest.itemDescription());
         requestResponse.setData(bRecord);
         requestResponse.setMessage("Book successfully created");
         return requestResponse;

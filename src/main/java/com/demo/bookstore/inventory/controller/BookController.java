@@ -1,6 +1,6 @@
 package com.demo.bookstore.inventory.controller;
 
-import com.demo.bookstore.inventory.BookRecord;
+import com.demo.bookstore.inventory.BookRequest;
 import com.demo.bookstore.inventory.service.InventoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -27,8 +27,8 @@ public class BookController {
     private final InventoryService inventoryService;
 
     @PostMapping("")
-    public ResponseEntity<?> stockBookInventory(@Valid @RequestBody BookRecord bookRecord){
-        var requestResponse = inventoryService.stockUpBooks(bookRecord);
+    public ResponseEntity<?> stockBookInventory(@Valid @RequestBody BookRequest bookRequest){
+        var requestResponse = inventoryService.stockUpBooks(bookRequest);
         HttpHeaders responseHeaders = new HttpHeaders();
         URI newBookUri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(requestResponse.getData().id()).toUri();
         responseHeaders.setLocation(newBookUri);

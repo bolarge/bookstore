@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.util.Objects;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,5 +30,18 @@ public class Author extends BaseEntity {
         this.name = name;
         this.email = email;
         this.bio = bio;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Author author)) return false;
+        if (!super.equals(o)) return false;
+        return getName().equals(author.getName()) && getEmail().equals(author.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getName(), getEmail());
     }
 }
