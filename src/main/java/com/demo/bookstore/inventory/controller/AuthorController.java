@@ -16,8 +16,8 @@ import java.net.URI;
 
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Author", description = "Author Resource")
-@RequestMapping("v1/authors")
+@Tag(name = "Authors", description = "Author Resource")
+@RequestMapping("/api/v1/authors")
 @RestController
 public class AuthorController {
 
@@ -31,11 +31,5 @@ public class AuthorController {
         responseHeaders.setLocation(newAuthorUri);
         return new ResponseEntity<>(requestResponse, responseHeaders, HttpStatus.CREATED);
     }
-
-  /*  @GetMapping("/{id}")
-    public ResponseEntity<?> getAuthorById(@PathVariable("id") Long id){
-        var queryResponse = b2BService.getByEntityId(id);
-        return ResponseEntity.ok(queryResponse);
-    }*/
 
 }

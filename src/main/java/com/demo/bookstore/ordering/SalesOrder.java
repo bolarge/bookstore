@@ -1,7 +1,8 @@
 package com.demo.bookstore.ordering;
 
 import com.demo.bookstore.crm.User;
-import com.demo.bookstore.utils.NamedEntity;
+import com.demo.bookstore.payment.Payment;
+import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,11 +17,17 @@ import java.math.BigDecimal;
 @ToString
 @Table(name = "sales_orders")
 @Entity
-public class Order extends NamedEntity {
+public class SalesOrder extends BaseEntity {
     @OneToOne
     private User customer;
-    private BigDecimal totalAmount;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    private BigDecimal orderAmount;
+    //@OneToOne
+    //@JoinColumn(name = "shopping_cart_id")
+    private ShoppingCart shoppingCart;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+    private Payment payment;
 
 }

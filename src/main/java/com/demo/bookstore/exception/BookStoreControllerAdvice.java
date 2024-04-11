@@ -1,56 +1,64 @@
 package com.demo.bookstore.exception;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
-@RequiredArgsConstructor
-@ControllerAdvice
-public class BookStoreControllerAdvice extends ResponseEntityExceptionHandler  {
+@Slf4j
+@RestControllerAdvice
+public class BookStoreControllerAdvice {
 
-	private final MessageSource messageSource;
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String,String> handleInvalidArgument(MethodArgumentNotValidException exception) {
+		Map<String,String> errorMap = new HashMap<>();
+		exception.getBindingResult().getFieldErrors().forEach(error->
+		{
+			errorMap.put(error.getField(),error.getDefaultMessage());
+		});
+		return errorMap;
+	}
 
-	@ResponseBody
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<?> constraintViolationException(ConstraintViolationException ex, WebRequest request) {
+		List<String> errors = new ArrayList<>();
+		ex.getConstraintViolations().forEach(cv -> errors.add(cv.getMessage()));
+
+		Map<String, List<String>> result = new HashMap<>();
+		result.put("errors", errors);
+		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException rnfe) {
-		ProblemDetail errorDetail = new ProblemDetail("Resource not found", HttpStatus.NOT_FOUND.value(),
-      "Resource Not Found", Long.parseLong(LocalDateTime.now().toString()), rnfe.getMessage(), null);
-		return new ResponseEntity<>(errorDetail, null, HttpStatus.NOT_FOUND);
+	public ResponseEntity<Map<String, List<String>>> handleNotFoundException(ResourceNotFoundException ex) {
+		List<String> errors = Collections.singletonList(ex.getMessage());
+		return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.NOT_FOUND);
 	}
 
-	public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException manve, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
-    ProblemDetail errorDetail = new ProblemDetail("Validation Failed", HttpStatus.BAD_REQUEST.value(), "Input validation failed",
-      Long.parseLong(LocalDateTime.now().toString()), manve.getMessage(), null);
-
-		List<FieldError> fieldErrors =  manve.getBindingResult().getFieldErrors();
-		for(FieldError fe : fieldErrors) {
-      List<ValidationError> validationErrorList = errorDetail.validationErrors().computeIfAbsent(fe.getField(), k -> new ArrayList<>());
-      ValidationError validationError = new ValidationError(fe.getCode(),messageSource.getMessage(fe, Locale.getDefault()));
-			validationErrorList.add(validationError);
-		}
-		return handleExceptionInternal(manve, errorDetail, headers, status, request);
+	@ExceptionHandler(Exception.class)
+	public final ResponseEntity<Map<String, List<String>>> handleGeneralExceptions(Exception ex) {
+		List<String> errors = Collections.singletonList(ex.getMessage());
+		return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers,
-			HttpStatus status, WebRequest request) {
-    ProblemDetail errorDetail = new ProblemDetail("Message not readable", HttpStatus.BAD_REQUEST.value(), ex.getMessage(),
-      Long.parseLong(LocalDateTime.now().toString()), ex.getClass().getName(), null);
-		return handleExceptionInternal(ex, errorDetail, headers, status, request);
+	@ExceptionHandler(RuntimeException.class)
+	public final ResponseEntity<Map<String, List<String>>> handleRuntimeExceptions(RuntimeException ex) {
+		List<String> errors = Collections.singletonList(ex.getMessage());
+		return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	private Map<String, List<String>> getErrorsMap(List<String> errors) {
+		Map<String, List<String>> errorResponse = new HashMap<>();
+		errorResponse.put("errors", errors);
+		return errorResponse;
 	}
 }

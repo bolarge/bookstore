@@ -29,12 +29,13 @@ public class Book extends BaseEntity {
     @ManyToOne
     private Author author;
 
-    public Book(String title, String isbn, String publicationYear, BookGenre valueOf, Author bookAuthor) {
+    public Book(String title, String isbn, String publicationYear, BookGenre valueOf, Author bookAuthor, BigDecimal price) {
         this.title = title;
         this.isbn = isbn;
         this.publicationYear = publicationYear;
         this.bookGenre = valueOf;
         this.author = bookAuthor;
+        this.price = price;
     }
 
     @Override

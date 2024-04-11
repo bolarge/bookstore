@@ -2,10 +2,11 @@ package com.demo.bookstore.ordering;
 
 import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+
 import lombok.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,11 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@Table(name = "shopping_cart")
-@Entity
-public class ShoppingCart extends BaseEntity {
+//@Table(name = "shopping_cart")
+//@Entity
+@Embeddable
+@Component
+public class ShoppingCart { //extends BaseEntity {
     @OneToMany
     private List<Item> items;
 

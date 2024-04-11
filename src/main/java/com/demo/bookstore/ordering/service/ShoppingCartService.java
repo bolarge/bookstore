@@ -2,6 +2,7 @@ package com.demo.bookstore.ordering.service;
 
 import com.demo.bookstore.ordering.Item;
 import com.demo.bookstore.ordering.ItemRequest;
+import com.demo.bookstore.ordering.SalesOrder;
 import com.demo.bookstore.ordering.ShoppingCart;
 
 import java.math.BigDecimal;
@@ -16,5 +17,5 @@ public interface ShoppingCartService {
     ShoppingCart updateItemQuantity(ItemRequest itemRequest);
     BigDecimal getTotalAmount();
 
-
+    SalesOrder checkOutShoppingCart(String userId);
 }

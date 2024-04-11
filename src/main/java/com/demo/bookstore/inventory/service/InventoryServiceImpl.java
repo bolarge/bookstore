@@ -1,10 +1,15 @@
 package com.demo.bookstore.inventory.service;
 
 import com.demo.bookstore.inventory.*;
+import com.demo.bookstore.inventory.dataaccess.AuthorRepository;
+import com.demo.bookstore.inventory.dataaccess.BookRepository;
+import com.demo.bookstore.inventory.dataaccess.InventoryRepository;
 import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +38,7 @@ public class InventoryServiceImpl implements InventoryService{
     public GenericResponse<BookRequest> stockUpBooks(BookRequest bookRequest) {
         var bookAuthor = findByAuthorName(bookRequest.author());
         var newBook = new Book(bookRequest.title(), bookRequest.isbn(), bookRequest.publicationYear(),
-                BookGenre.valueOf(bookRequest.genre().toUpperCase()), bookAuthor);
+                BookGenre.valueOf(bookRequest.genre().toUpperCase()), bookAuthor, BigDecimal.valueOf(bookRequest.price()));
         newBook = bookRepository.save(newBook);
 
         var freshStock = new Inventory(bookRequest.title(), bookRequest.itemDescription(), bookRequest.purchaseOrderId(),
@@ -43,7 +48,7 @@ public class InventoryServiceImpl implements InventoryService{
         var requestResponse = new GenericResponse<BookRequest>();
 
         var bRecord = new BookRequest(newBook.getTitle(), newBook.getIsbn(), newBook.getPublicationYear().toString(), newBook.getBookGenre().toString(),
-                freshStock.getItemQty(), bookRequest.author(), bookRequest.purchaseOrderId(), newBook.getId(), bookRequest.itemDescription());
+                newBook.getPrice().toBigInteger().longValue(), freshStock.getItemQty(), bookRequest.author(), bookRequest.purchaseOrderId(), newBook.getId(), bookRequest.itemDescription());
         requestResponse.setData(bRecord);
         requestResponse.setMessage("Book successfully created");
         return requestResponse;

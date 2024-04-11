@@ -1,12 +1,10 @@
 package com.demo.bookstore.ordering.service;
 
-import com.demo.bookstore.inventory.AuthorRepository;
+import com.demo.bookstore.crm.User;
+import com.demo.bookstore.crm.UserType;
 import com.demo.bookstore.inventory.Book;
-import com.demo.bookstore.inventory.BookRepository;
-import com.demo.bookstore.ordering.Item;
-import com.demo.bookstore.ordering.ItemRequest;
-import com.demo.bookstore.ordering.ShoppingCart;
-import com.demo.bookstore.ordering.ShoppingCartRepository;
+import com.demo.bookstore.inventory.dataaccess.BookRepository;
+import com.demo.bookstore.ordering.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,9 +18,9 @@ import java.util.ListIterator;
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
-    private final ShoppingCartRepository shoppingCartRepository;
+    //private final ShoppingCartRepository shoppingCartRepository;
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
+    private final SalesOrderRepository salesOrderRepository;
     private final ShoppingCart shoppingCart = new ShoppingCart();
     private BigDecimal totalAmount;
 
@@ -82,5 +80,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             this.totalAmount = this.totalAmount.add(item.getBook().getPrice().multiply(new BigDecimal(item.getQuantity())));
         }
         return this.totalAmount;
+    }
+
+    @Override
+    public SalesOrder checkOutShoppingCart(String userId) {
+        BigDecimal totalAmount = getTotalAmount();
+        User us1 = new User("bj@gmail.com", "Bolaji", "Salau", "5555555555",UserType.CUSTOMER);
+        SalesOrder salesOrder = new SalesOrder(us1, OrderStatus.CHECKOUT, totalAmount, shoppingCart, PaymentStatus.PROCESSING,
+                null);
+
+        salesOrder = salesOrderRepository.save(salesOrder);
+        return salesOrder;
     }
 }

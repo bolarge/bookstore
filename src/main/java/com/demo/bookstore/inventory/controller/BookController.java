@@ -19,8 +19,8 @@ import java.net.URI;
 
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "Book", description = "Book Resource")
-@RequestMapping("v1/books")
+@Tag(name = "Books", description = "Book Resource")
+@RequestMapping("/api/v1/books")
 @RestController
 public class BookController {
 
