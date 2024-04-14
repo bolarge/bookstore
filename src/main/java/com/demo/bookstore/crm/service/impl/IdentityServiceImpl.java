@@ -1,15 +1,14 @@
 package com.demo.bookstore.crm.service.impl;
 
-import com.demo.bookstore.crm.Identity;
-import com.demo.bookstore.crm.Role;
-import com.demo.bookstore.crm.User;
-import com.demo.bookstore.crm.UserRole;
+import com.demo.bookstore.crm.*;
 import com.demo.bookstore.crm.dataaccess.IdentityRepository;
 import com.demo.bookstore.crm.dataaccess.RoleRepository;
 import com.demo.bookstore.crm.dataaccess.UserRepository;
 import com.demo.bookstore.crm.datatransfer.SignUpRequest;
+import com.demo.bookstore.crm.datatransfer.SignUpResponse;
 import com.demo.bookstore.crm.datatransfer.UserRecord;
 import com.demo.bookstore.crm.service.IdentityService;
+import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,14 +27,21 @@ public class IdentityServiceImpl implements IdentityService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
+
     @Override
-    public Identity signUpUser(SignUpRequest signUpRequest) {
-        return identityRepository.save(new Identity(signUpRequest.username(), encoder.encode(signUpRequest.password()),
+    public GenericResponse<SignUpResponse> createUserIdentity(SignUpRequest signUpRequest) {
+        var newIdentity = identityRepository.save(new Identity(signUpRequest.username(), encoder.encode(signUpRequest.password()),
                 signUpRequest.email(), signUpRequest.dateOfBirth()));
+        var requestResponse = new GenericResponse<SignUpResponse>();
+        var signUPResponse = new SignUpResponse(newIdentity.getId(), newIdentity.getUsername(), newIdentity.getPassword(),
+                newIdentity.getEmail(), newIdentity.getDob());
+        requestResponse.setData(signUPResponse);
+        requestResponse.setMessage("New User Identity successfully created");
+        return  requestResponse;
     }
 
     @Override
-    public UserRecord createUserProfile(UserRecord userRecord, Long userIdentity) {
+    public GenericResponse<UserRecord> createUser(UserRecord userRecord, Long userIdentity) {
         Optional<Identity> queriedIdentity = identityRepository.findById(userIdentity);
         Identity foundIdentity = queriedIdentity.orElseThrow();
 
@@ -67,11 +73,17 @@ public class IdentityServiceImpl implements IdentityService {
             });
         }
 
-        User newUser = new User(userRecord.firstName(),userRecord.lastName(),userRecord.isAdmin(),foundIdentity, roles);
+        User newUser = new User(userRecord.firstName(),userRecord.lastName(),userRecord.isAdmin(),foundIdentity, roles,
+                userRecord.isAdmin()? UserType.EMPLOYEE:UserType.CUSTOMER);
         newUser = userRepository.save(newUser);
 
-        return new UserRecord(newUser.getFirstName(), newUser.getLastName(), newUser.isAdmin(),
+        var userResponse = new GenericResponse<UserRecord>();
+
+        var uRecord = new UserRecord(newUser.getId(), newUser.getFirstName(), newUser.getLastName(), newUser.isAdmin(),
                 strRoles, newUser.getIdentity().getUsername());
+        userResponse.setData(uRecord);
+        userResponse.setMessage(String.format("User whose UserID is %s was successfully created", userIdentity));
+        return  userResponse;
     }
 
     @Override

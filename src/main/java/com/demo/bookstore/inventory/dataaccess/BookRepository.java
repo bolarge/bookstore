@@ -6,10 +6,11 @@ import com.demo.bookstore.inventory.BookGenre;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-    Book findBookByTitle(String title);
-    Book findBookByBookGenre(BookGenre bookGenre);
-    Book findBookByPublicationYear(String year);
-    Book findBookByAuthor(Author author);
+    Book findByTitle(String title);
+    List<Book> findByPublicationYear(String publicationYear);
+    List<Book> findByBookGenre(BookGenre bookGenre);
+    List<Book> findByAuthor(Author author);
 }

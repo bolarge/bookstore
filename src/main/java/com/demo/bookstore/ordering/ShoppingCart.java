@@ -1,6 +1,5 @@
 package com.demo.bookstore.ordering;
 
-import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
@@ -16,16 +15,12 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-//@Table(name = "shopping_cart")
-//@Entity
 @Embeddable
 @Component
-public class ShoppingCart { //extends BaseEntity {
+public class ShoppingCart {
     @OneToMany
     private List<Item> items;
-
     public ShoppingCart(){
         this.items = new ArrayList<>();
     }
-
 }

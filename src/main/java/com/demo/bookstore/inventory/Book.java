@@ -1,6 +1,7 @@
 package com.demo.bookstore.inventory;
 
 import com.demo.bookstore.utils.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -26,7 +27,9 @@ public class Book extends BaseEntity {
     private BookGenre bookGenre;
     private BigDecimal price;
 
-    @ManyToOne
+    @JsonBackReference
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     private Author author;
 
     public Book(String title, String isbn, String publicationYear, BookGenre valueOf, Author bookAuthor, BigDecimal price) {

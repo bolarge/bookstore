@@ -20,7 +20,6 @@ import java.util.Set;
 @Entity
 @Table(name="users")
 public class User extends BaseEntity {
-	private String email;
 	private String firstName;
 	private String lastName;
 	private String mobilePhone;
@@ -39,26 +38,25 @@ public class User extends BaseEntity {
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
-	public User(String email, String firstName, String lastName, String mobilePhone, UserType userType) {
-		this.email = email;
+	public User(String firstName, String lastName, String mobilePhone, UserType userType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.mobilePhone = mobilePhone;
 		this.userType = userType;
 	}
 
-	public User(String firstName, String lastName, boolean isAdmin, Identity identity, Set<Role> roles) {
+	public User(String firstName, String lastName, boolean isAdmin, Identity identity, Set<Role> roles, UserType userType) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.isAdmin = isAdmin;
 		this.identity = identity;
 		this.roles = roles;
+		this.userType = userType;
 	}
 
-	public User(String firstName, String lastName, String email) {
+	public User(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.email = email;
 	}
 
 	@Override
@@ -66,11 +64,11 @@ public class User extends BaseEntity {
 		if (this == o) return true;
 		if (!(o instanceof User user)) return false;
 		if (!super.equals(o)) return false;
-		return getEmail().equals(user.getEmail()) && getFirstName().equals(user.getFirstName()) && getLastName().equals(user.getLastName());
+		return getFirstName().equals(user.getFirstName()) && getLastName().equals(user.getLastName()) && getIdentity().equals(user.getIdentity());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), getEmail(), getFirstName(), getLastName());
+		return Objects.hash(super.hashCode(), getFirstName(), getLastName(), getIdentity());
 	}
 }

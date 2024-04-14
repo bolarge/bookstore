@@ -1,11 +1,11 @@
 package com.demo.bookstore.ordering;
 
+import com.demo.bookstore.crm.User;
 import com.demo.bookstore.inventory.Book;
 import com.demo.bookstore.utils.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
@@ -13,30 +13,33 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
+@Table(name = "item")
 public class Item extends BaseEntity {
+    @JsonBackReference
+    @ToString.Exclude
+    @OneToOne(fetch = FetchType.LAZY)
+    private User customer;
     @ManyToOne
     private Book book;
     private int quantity;
 
-    public Item(Book book, int quantity) {
+    public Item(Book book, int quantity, User user) {
         this.book = book;
         this.quantity = quantity;
+        this.customer = user;
     }
-
-    public Item() {
-
-    }
+    public Item() {}
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Item item = (Item) o;
-        return getId() != null && Objects.equals(getId(), item.getId());
+        if (!(o instanceof Item item)) return false;
+        if (!super.equals(o)) return false;
+        return getCustomer().equals(item.getCustomer()) && getBook().equals(item.getBook());
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(super.hashCode(), getCustomer(), getBook());
     }
 }

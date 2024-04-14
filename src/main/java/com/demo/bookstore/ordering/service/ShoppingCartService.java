@@ -9,13 +9,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ShoppingCartService {
-
+    //Shopping cart
     ShoppingCart addItemsToCart(ItemRequest itemRequest);
     List<Item> showCartItems();
     ShoppingCart removeFromCart(ItemRequest itemRequest);
-
     ShoppingCart updateItemQuantity(ItemRequest itemRequest);
     BigDecimal getTotalAmount();
+    SalesOrder checkOutShoppingCart();
 
-    SalesOrder checkOutShoppingCart(String userId);
+    //Item getAnItemByBook(ItemRequest itemRequest);
 }

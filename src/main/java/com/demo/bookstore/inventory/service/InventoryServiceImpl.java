@@ -1,5 +1,6 @@
 package com.demo.bookstore.inventory.service;
 
+import com.demo.bookstore.crm.User;
 import com.demo.bookstore.inventory.*;
 import com.demo.bookstore.inventory.dataaccess.AuthorRepository;
 import com.demo.bookstore.inventory.dataaccess.BookRepository;
@@ -8,8 +9,10 @@ import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,31 +56,51 @@ public class InventoryServiceImpl implements InventoryService{
         requestResponse.setMessage("Book successfully created");
         return requestResponse;
     }
-
     @Override
+    @Transactional(readOnly = true)
     public Author findByAuthorName(String authorName) {
         return authorRepository.findAuthorByName(authorName);
     }
 
     @Override
-    public Book findBookByTitle(String title) {
-        return bookRepository.findBookByTitle(title);
+    @Transactional(readOnly = true)
+    public Book findByTitle(String title) {
+        return bookRepository.findByTitle(title);
     }
 
     @Override
-    public Book findBookByGenre(BookGenre bookGenre) {
-        return bookRepository.findBookByBookGenre(bookGenre);
+    @Transactional(readOnly = true)
+    public List<Book> findByPublicationYear(String publicationYear) {
+        return bookRepository.findByPublicationYear(publicationYear);
     }
 
     @Override
-    public Book findBookByPublicationYear(String year) {
-        return bookRepository.findBookByPublicationYear(year);
+    @Transactional(readOnly = true)
+    public List<Book> findByGenre(BookGenre bookGenre) {
+        return bookRepository.findByBookGenre(bookGenre);
     }
 
     @Override
-    public Book findBookByAuthor(Author author) {
-        return bookRepository.findBookByAuthor(author);
+    @Transactional(readOnly = true)
+    public List<Book> getBooksUsingAuthorName(String authorName) {
+        var foundAuthor = findByAuthorName(authorName);
+        return bookRepository.findByAuthor(foundAuthor);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<Author> fetchAllAuthors() {
+        return authorRepository.findAll();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<Book> fetchAllBooks() {
+        return bookRepository.findAll();
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Iterable<Inventory> fetchAllInventories() {
+        return inventoryRepository.findAll();
+    }
 }

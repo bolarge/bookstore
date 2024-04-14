@@ -11,16 +11,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "User Resource")
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/v1/users")
 @RestController
 public class UserController {
 
     private final IdentityService identityService;
-    @PostMapping("/{userIdentity}")
-    public ResponseEntity<UserRecord> registerUser(@Valid @RequestBody UserRecord userRecord, @PathVariable Long userIdentity){
-        UserRecord newRecord = identityService.createUserProfile(userRecord, userIdentity);
-        return new ResponseEntity<>(newRecord, HttpStatus.CREATED);
+    @PostMapping("/{userId}")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRecord userRecord, @PathVariable Long userId){
+        var userResponse = identityService.createUser(userRecord, userId);
+        return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
     @GetMapping("")
     public ResponseEntity<?> getAllUsers(){

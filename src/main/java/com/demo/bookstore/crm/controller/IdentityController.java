@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Tag(name = "Identities", description = "Identity Resource")
 @RequestMapping("/api/v1/identity")
-//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class IdentityController {
 
@@ -51,7 +50,7 @@ public class IdentityController {
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
-        var requestResponse = identityService.signUpUser(signUpRequest);
+        var requestResponse = identityService.createUserIdentity(signUpRequest);
         return new ResponseEntity<>(requestResponse, HttpStatus.OK);
     }
     @PostMapping("/signin")

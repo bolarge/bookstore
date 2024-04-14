@@ -3,12 +3,22 @@ package com.demo.bookstore.inventory.service;
 import com.demo.bookstore.inventory.*;
 import com.demo.bookstore.utils.GenericResponse;
 
+import java.util.List;
+
 public interface InventoryService {
+    //Authors
     GenericResponse<AuthorRequest> createAuthor(AuthorRequest authorRequest);
-    GenericResponse<BookRequest> stockUpBooks(BookRequest bookRequest);
+    Iterable<Author> fetchAllAuthors();
     Author findByAuthorName(String authorName);
-    Book findBookByTitle(String title);
-    Book findBookByGenre(BookGenre bookGenre);
-    Book findBookByPublicationYear(String year);
-    Book findBookByAuthor(Author author);
+
+    //Books
+    Book findByTitle(String title);
+    List<Book> findByPublicationYear(String year);
+    List<Book>  findByGenre(BookGenre bookGenre);
+    List<Book> getBooksUsingAuthorName(String authorName);
+    Iterable<Book> fetchAllBooks();
+
+    //Inventories
+    GenericResponse<BookRequest> stockUpBooks(BookRequest bookRequest);
+    Iterable<Inventory> fetchAllInventories();
 }

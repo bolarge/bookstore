@@ -1,5 +1,5 @@
 package com.demo.bookstore.payment;
 
-public enum PaymentMode {
+public enum PaymentChannel {
     WEB, USSD, TRANSFER
 }

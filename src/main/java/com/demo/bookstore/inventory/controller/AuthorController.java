@@ -17,13 +17,11 @@ import java.net.URI;
 @Slf4j
 @RequiredArgsConstructor
 @Tag(name = "Authors", description = "Author Resource")
-@RequestMapping("/api/v1/authors")
+@RequestMapping("/api/v1")
 @RestController
 public class AuthorController {
-
     private final InventoryService inventoryService;
-
-    @PostMapping("")
+    @PostMapping("/authors")
     public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorRequest authorRequest){
         var requestResponse = inventoryService.createAuthor(authorRequest);
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -31,5 +29,8 @@ public class AuthorController {
         responseHeaders.setLocation(newAuthorUri);
         return new ResponseEntity<>(requestResponse, responseHeaders, HttpStatus.CREATED);
     }
-
+    @GetMapping("/authors")
+    public ResponseEntity<?> getAllAuthors(){
+        return new ResponseEntity<>(inventoryService.fetchAllAuthors(), HttpStatus.OK);
+    }
 }
