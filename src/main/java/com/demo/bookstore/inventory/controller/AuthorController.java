@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,6 +22,7 @@ import java.net.URI;
 @RestController
 public class AuthorController {
     private final InventoryService inventoryService;
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/authors")
     public ResponseEntity<?> createAuthor(@Valid @RequestBody AuthorRequest authorRequest){
         var requestResponse = inventoryService.createAuthor(authorRequest);
@@ -29,6 +31,7 @@ public class AuthorController {
         responseHeaders.setLocation(newAuthorUri);
         return new ResponseEntity<>(requestResponse, responseHeaders, HttpStatus.CREATED);
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/authors")
     public ResponseEntity<?> getAllAuthors(){
         return new ResponseEntity<>(inventoryService.fetchAllAuthors(), HttpStatus.OK);

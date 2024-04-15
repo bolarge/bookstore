@@ -7,21 +7,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "User Resource")
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1")
 @RestController
 public class UserController {
-
     private final IdentityService identityService;
-    @PostMapping("/{userId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping("/users/{userId}")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRecord userRecord, @PathVariable Long userId){
         var userResponse = identityService.createUser(userRecord, userId);
         return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
     }
-    @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/users")
     public ResponseEntity<?> getAllUsers(){
         return new ResponseEntity<>(identityService.fetchAllUsers(), HttpStatus.OK);
     }

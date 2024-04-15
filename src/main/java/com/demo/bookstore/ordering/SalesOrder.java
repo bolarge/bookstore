@@ -36,4 +36,6 @@ public class SalesOrder extends BaseEntity {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+
+
 }
