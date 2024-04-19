@@ -23,8 +23,12 @@ public class Role extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private UserRole name;
+    private UserRole userRole;
 
     @ManyToMany(mappedBy = "roles")
     Set<User> users;
+
+    public Role(UserRole roleUser) {
+        this.userRole = roleUser;
+    }
 }

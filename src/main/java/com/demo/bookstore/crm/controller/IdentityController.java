@@ -1,6 +1,6 @@
 package com.demo.bookstore.crm.controller;
 
-import com.demo.bookstore.crm.dataaccess.IdentityRepository;
+import com.demo.bookstore.crm.repository.IdentityRepository;
 import com.demo.bookstore.crm.datatransfer.JwtResponse;
 import com.demo.bookstore.crm.datatransfer.MessageResponse;
 import com.demo.bookstore.crm.datatransfer.SignInRequest;

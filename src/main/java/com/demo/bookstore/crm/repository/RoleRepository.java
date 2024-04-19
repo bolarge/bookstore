@@ -1,4 +1,4 @@
-package com.demo.bookstore.crm.dataaccess;
+package com.demo.bookstore.crm.repository;
 
 import com.demo.bookstore.crm.Role;
 import com.demo.bookstore.crm.UserRole;
@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    Optional<Role> findByName(UserRole userRole);
+    Optional<Role> findByUserRole(UserRole userRole);
 }

@@ -1,6 +1,6 @@
 package com.demo.bookstore.security;
 
-import com.demo.bookstore.crm.dataaccess.IdentityRepository;
+import com.demo.bookstore.crm.repository.IdentityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

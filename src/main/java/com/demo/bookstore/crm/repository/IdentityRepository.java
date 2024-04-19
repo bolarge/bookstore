@@ -1,4 +1,4 @@
-package com.demo.bookstore.crm.dataaccess;
+package com.demo.bookstore.crm.repository;
 
 import com.demo.bookstore.crm.Identity;
 import org.springframework.data.jpa.repository.JpaRepository;

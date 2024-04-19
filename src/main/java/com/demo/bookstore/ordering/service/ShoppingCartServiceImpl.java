@@ -2,12 +2,12 @@ package com.demo.bookstore.ordering.service;
 
 import com.demo.bookstore.crm.Identity;
 import com.demo.bookstore.crm.User;
-import com.demo.bookstore.crm.dataaccess.IdentityRepository;
+import com.demo.bookstore.crm.repository.IdentityRepository;
 import com.demo.bookstore.inventory.Book;
-import com.demo.bookstore.inventory.dataaccess.BookRepository;
+import com.demo.bookstore.inventory.repository.BookRepository;
 import com.demo.bookstore.ordering.*;
-import com.demo.bookstore.ordering.dataaccess.ItemRepository;
-import com.demo.bookstore.ordering.dataaccess.SalesOrderRepository;
+import com.demo.bookstore.ordering.repository.ItemRepository;
+import com.demo.bookstore.ordering.repository.SalesOrderRepository;
 import com.demo.bookstore.payment.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -31,7 +31,7 @@ Application is a monolith maven project with no internal sub modules. It inherit
 
 ### Database Setup
 Hibernate ddl.auto flag is set to update, therefore, bookstore_db database is to be created. Run below code
-from any postgres client terminal
+from any mysql client terminal
 ```properties
 CREATE DATABASE bookstore_db;
 ```

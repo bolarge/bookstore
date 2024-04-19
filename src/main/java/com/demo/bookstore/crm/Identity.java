@@ -4,9 +4,7 @@ import com.demo.bookstore.utils.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -14,7 +12,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Entity
@@ -28,16 +28,27 @@ public class Identity extends BaseEntity {
     private String email;
     private Date dob;
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "identity", fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "identity")
     private User user;
-    @OneToMany
-    private Set<Role> roles = new HashSet<>();
 
     public Identity(String username, String password, String email, Date dob) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.dob = dob;
+    }
+
+    public Identity(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    public Identity(Long id, String username, String password, String email) {
+        super(id);
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     @Override

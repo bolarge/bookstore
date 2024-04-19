@@ -29,7 +29,7 @@ public class User extends BaseEntity {
 	private boolean isAdmin = false;
 
 	@JsonBackReference
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	private Identity identity;
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY)

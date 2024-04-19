@@ -1,10 +1,9 @@
 package com.demo.bookstore.inventory.service;
 
-import com.demo.bookstore.crm.User;
 import com.demo.bookstore.inventory.*;
-import com.demo.bookstore.inventory.dataaccess.AuthorRepository;
-import com.demo.bookstore.inventory.dataaccess.BookRepository;
-import com.demo.bookstore.inventory.dataaccess.InventoryRepository;
+import com.demo.bookstore.inventory.repository.AuthorRepository;
+import com.demo.bookstore.inventory.repository.BookRepository;
+import com.demo.bookstore.inventory.repository.InventoryRepository;
 import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

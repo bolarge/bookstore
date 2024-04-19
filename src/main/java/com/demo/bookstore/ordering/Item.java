@@ -13,7 +13,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@Table(name = "item")
+@Table(name = "items")
 public class Item extends BaseEntity {
     @JsonBackReference
     @ToString.Exclude

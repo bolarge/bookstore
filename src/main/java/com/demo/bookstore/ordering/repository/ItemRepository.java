@@ -1,4 +1,4 @@
-package com.demo.bookstore.ordering.dataaccess;
+package com.demo.bookstore.ordering.repository;
 
 import com.demo.bookstore.crm.User;
 import com.demo.bookstore.inventory.Book;

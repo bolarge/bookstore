@@ -1,23 +1,30 @@
 package com.demo.bookstore.crm.service.impl;
 
 import com.demo.bookstore.crm.*;
-import com.demo.bookstore.crm.dataaccess.IdentityRepository;
-import com.demo.bookstore.crm.dataaccess.RoleRepository;
-import com.demo.bookstore.crm.dataaccess.UserRepository;
+import com.demo.bookstore.crm.repository.IdentityRepository;
+import com.demo.bookstore.crm.repository.RoleRepository;
+import com.demo.bookstore.crm.repository.UserRepository;
 import com.demo.bookstore.crm.datatransfer.SignUpRequest;
 import com.demo.bookstore.crm.datatransfer.SignUpResponse;
 import com.demo.bookstore.crm.datatransfer.UserRecord;
 import com.demo.bookstore.crm.service.IdentityService;
+import com.demo.bookstore.utils.GenericListResponse;
 import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -49,24 +56,24 @@ public class IdentityServiceImpl implements IdentityService {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(UserRole.ROLE_USER)
+            Role userRole = roleRepository.findByUserRole(UserRole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(UserRole.ROLE_ADMIN)
+                        Role adminRole = roleRepository.findByUserRole(UserRole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
                         break;
                     case "hr_admin":
-                        Role modRole = roleRepository.findByName(UserRole.ROLE_HR_ADMIN)
+                        Role modRole = roleRepository.findByUserRole(UserRole.ROLE_HR_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(UserRole.ROLE_USER)
+                        Role userRole = roleRepository.findByUserRole(UserRole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
                 }
@@ -87,8 +94,34 @@ public class IdentityServiceImpl implements IdentityService {
     }
 
     @Override
+    public GenericListResponse<SignUpResponse> getAllIdentities(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Identity> identities = identityRepository.findAll(pageable);
+        List<Identity> listOfIdentities = identities.getContent();
+        List<SignUpResponse> content = listOfIdentities.stream().map(this::mapToSignUpResponse).collect(Collectors.toList());
+
+        GenericListResponse<SignUpResponse> identitiesList = new GenericListResponse<>();
+        identitiesList.setContent(content);
+        identitiesList.setPageNo(identities.getNumber());
+        identitiesList.setPageSize(identities.getSize());
+        identitiesList.setTotalElements(identities.getTotalElements());
+        identitiesList.setTotalPages(identities.getTotalPages());
+        identitiesList.setLast(identities.isLast());
+
+        return identitiesList;
+    }
+
+    private SignUpResponse mapToSignUpResponse(Identity signUpResponse) {
+        SignUpResponse response = new SignUpResponse(signUpResponse.getId(), signUpResponse.getUsername(),
+                signUpResponse.getPassword(), signUpResponse.getEmail(), signUpResponse.getDob());
+        return response;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Iterable<User> fetchAllUsers() {
         return userRepository.findAll();
     }
+
+
 }

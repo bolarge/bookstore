@@ -1,4 +1,4 @@
-package com.demo.bookstore.inventory.dataaccess;
+package com.demo.bookstore.inventory.repository;
 
 import com.demo.bookstore.inventory.Inventory;
 import org.springframework.data.jpa.repository.JpaRepository;
