@@ -59,6 +59,22 @@ public class User extends BaseEntity {
 		this.lastName = lastName;
 	}
 
+	public User(Long id, String firstName, String lastName) {
+		super(id);
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+
+	public User(Long userID, String firstName, String lastName, boolean isAdmin, UserType userType) {
+		super(userID);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.isAdmin = isAdmin;
+		//this.identity = identity;
+		//this.roles = roles;
+		this.userType = userType;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

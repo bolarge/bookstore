@@ -1,10 +1,7 @@
 package com.demo.bookstore.crm.controller;
 
+import com.demo.bookstore.crm.datatransfer.*;
 import com.demo.bookstore.crm.repository.IdentityRepository;
-import com.demo.bookstore.crm.datatransfer.JwtResponse;
-import com.demo.bookstore.crm.datatransfer.MessageResponse;
-import com.demo.bookstore.crm.datatransfer.SignInRequest;
-import com.demo.bookstore.crm.datatransfer.SignUpRequest;
 import com.demo.bookstore.crm.service.IdentityService;
 import com.demo.bookstore.security.UserDetailsImpl;
 import com.demo.bookstore.security.jwt.JwtUtils;
@@ -18,17 +15,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Tag(name = "Identities", description = "Identity Resource")
-@RequestMapping("/api/v1/identity")
+@RequestMapping("/api/v1")
 @RestController
 public class IdentityController {
 
@@ -37,7 +33,7 @@ public class IdentityController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
-    @PostMapping("/signup")
+    @PostMapping("/identities/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
         if (identityRepository.existsByUsername(signUpRequest.username())) {
             return ResponseEntity
@@ -53,7 +49,7 @@ public class IdentityController {
         var requestResponse = identityService.createUserIdentity(signUpRequest);
         return new ResponseEntity<>(requestResponse, HttpStatus.OK);
     }
-    @PostMapping("/signin")
+    @PostMapping("/identities/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequest signInRequest){
 
         Authentication authentication = authenticationManager.authenticate(
@@ -72,5 +68,33 @@ public class IdentityController {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
+    }
+
+    @GetMapping("/identities")
+    public ResponseEntity<List<IdentityDTO>> getIdentities() {
+        try {
+            return ResponseEntity.ok()
+                    .location((new URI("/api/v1/identities")))
+                    .body(identityService.findAll());
+        } catch (URISyntaxException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/identities/{id}")
+    public ResponseEntity<?> getAnIdentity(@PathVariable Long id) {
+        return identityService.findIdentityById(id)
+                .map(identityDto -> {
+                    try {
+                        return ResponseEntity
+                                .ok()
+                                .eTag(Long.toString(identityDto.getId()))
+                                .location(new URI("/api/v1/identities/" + identityDto.getId()))
+                                .body(identityDto);
+                    } catch (URISyntaxException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                    }
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }

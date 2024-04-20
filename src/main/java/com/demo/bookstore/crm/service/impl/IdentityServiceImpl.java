@@ -1,6 +1,7 @@
 package com.demo.bookstore.crm.service.impl;
 
 import com.demo.bookstore.crm.*;
+import com.demo.bookstore.crm.datatransfer.IdentityDTO;
 import com.demo.bookstore.crm.repository.IdentityRepository;
 import com.demo.bookstore.crm.repository.RoleRepository;
 import com.demo.bookstore.crm.repository.UserRepository;
@@ -8,6 +9,7 @@ import com.demo.bookstore.crm.datatransfer.SignUpRequest;
 import com.demo.bookstore.crm.datatransfer.SignUpResponse;
 import com.demo.bookstore.crm.datatransfer.UserRecord;
 import com.demo.bookstore.crm.service.IdentityService;
+import com.demo.bookstore.exception.ResourceNotFoundException;
 import com.demo.bookstore.utils.GenericListResponse;
 import com.demo.bookstore.utils.GenericResponse;
 import lombok.RequiredArgsConstructor;
@@ -111,16 +113,30 @@ public class IdentityServiceImpl implements IdentityService {
         return identitiesList;
     }
 
+    @Override
+    public List<IdentityDTO> findAll() {
+        return identityRepository.findAll().stream().map(this::mapToIdentityDto).collect(Collectors.toList());
+    }
+
     private SignUpResponse mapToSignUpResponse(Identity signUpResponse) {
-        SignUpResponse response = new SignUpResponse(signUpResponse.getId(), signUpResponse.getUsername(),
+        return new SignUpResponse(signUpResponse.getId(), signUpResponse.getUsername(),
                 signUpResponse.getPassword(), signUpResponse.getEmail(), signUpResponse.getDob());
-        return response;
+    }
+
+    private IdentityDTO mapToIdentityDto(Identity identity){
+        return IdentityDTO.builder().id(identity.getId()).username(identity.getUsername()).password(identity.getPassword())
+                .email(identity.getEmail()).dob(identity.getDob()).build();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Iterable<User> fetchAllUsers() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public Optional<Identity>  findIdentityById(Long identityId) {
+        return Optional.ofNullable(identityRepository.findById(identityId).orElseThrow(() -> new ResourceNotFoundException("Identity could be found")));
     }
 
 

@@ -37,6 +37,13 @@ public class Identity extends BaseEntity {
         this.email = email;
         this.dob = dob;
     }
+    public Identity(Long id, String username, String password, String email, Date dob) {
+        super(id);
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.dob = dob;
+    }
 
     public Identity(String username, String password, String email) {
         this.username = username;
