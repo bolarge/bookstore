@@ -5,11 +5,13 @@ import com.demo.bookstore.crm.repository.IdentityRepository;
 import com.demo.bookstore.crm.service.IdentityService;
 import com.demo.bookstore.security.UserDetailsImpl;
 import com.demo.bookstore.security.jwt.JwtUtils;
+import com.demo.bookstore.utils.GenericResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,7 +36,7 @@ public class IdentityController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/identities/signup")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignUpRequest signUpRequest){
+    public ResponseEntity<?> createAnIdentity(@Valid @RequestBody SignUpRequest signUpRequest){
         if (identityRepository.existsByUsername(signUpRequest.username())) {
             return ResponseEntity
                     .badRequest()
@@ -47,10 +49,18 @@ public class IdentityController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
         var requestResponse = identityService.createUserIdentity(signUpRequest);
-        return new ResponseEntity<>(requestResponse, HttpStatus.OK);
+
+        try {
+            return ResponseEntity
+                    .created(new URI("/api/v1/identities/" + requestResponse.getData().id()))
+                    .eTag(Long.toString(requestResponse.getData().id()))
+                    .body(requestResponse);
+        } catch (URISyntaxException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
     @PostMapping("/identities/signin")
-    public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequest signInRequest){
+    public ResponseEntity<?> authenticateIdentity(@Valid @RequestBody SignInRequest signInRequest){
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInRequest.username(), signInRequest.password()));
@@ -70,6 +80,7 @@ public class IdentityController {
                 roles));
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/identities")
     public ResponseEntity<List<IdentityDTO>> getIdentities() {
         try {
@@ -81,6 +92,7 @@ public class IdentityController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/identities/{id}")
     public ResponseEntity<?> getAnIdentity(@PathVariable Long id) {
         return identityService.findIdentityById(id)

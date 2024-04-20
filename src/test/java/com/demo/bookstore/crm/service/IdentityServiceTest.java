@@ -1,7 +1,6 @@
 package com.demo.bookstore.crm.service;
 
 import com.demo.bookstore.crm.*;
-import com.demo.bookstore.crm.datatransfer.IdentityDTO;
 import com.demo.bookstore.crm.datatransfer.SignUpRequest;
 import com.demo.bookstore.crm.datatransfer.SignUpResponse;
 import com.demo.bookstore.crm.datatransfer.UserRecord;
