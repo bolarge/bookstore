@@ -11,10 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@AllArgsConstructor
+//@AllArgsConstructor
 @Getter
 @Setter
-@ToString
 @Embeddable
 @Component
 public class ShoppingCart {
@@ -22,5 +21,9 @@ public class ShoppingCart {
     private List<Item> items;
     public ShoppingCart(){
         this.items = new ArrayList<>();
+    }
+
+    public ShoppingCart(List<Item> itemList){
+        this.items = itemList;
     }
 }

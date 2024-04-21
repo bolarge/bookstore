@@ -29,14 +29,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final BookRepository bookRepository;
     private final SalesOrderRepository salesOrderRepository;
     private final ItemRepository itemRepository;
-    private final ShoppingCart shoppingCart = new ShoppingCart();
+    private final ShoppingCart shoppingCart; // = new ShoppingCart();
     private final PaymentRepository paymentRepository;
+    private final List<Item> itemList;
     @Autowired
     private PaymentClient paymentClient;
 
     @Override
     public ShoppingCart addItemsToCart(ItemRequest itemRequest) {
         User customer = null;
+        shoppingCart.setItems(itemList);
         Optional<User> foundUser = getAuthenticatedUser();
         if(foundUser.isPresent()){
             customer = foundUser.get().getIdentity().getUser();

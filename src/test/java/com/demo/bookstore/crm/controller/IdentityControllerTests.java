@@ -1,10 +1,14 @@
 package com.demo.bookstore.crm.controller;
 
 import com.demo.bookstore.crm.*;
+import com.demo.bookstore.crm.datatransfer.SignUpRequest;
+import com.demo.bookstore.crm.datatransfer.SignUpResponse;
 import com.demo.bookstore.crm.repository.IdentityRepository;
 import com.demo.bookstore.crm.service.IdentityService;
 import com.demo.bookstore.security.UserDetailsServiceImpl;
 import com.demo.bookstore.security.jwt.JwtUtils;
+import com.demo.bookstore.utils.GenericResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,22 +20,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -98,4 +101,81 @@ public class IdentityControllerTests {
                 .andExpect(jsonPath("$.email", is("email@gmail.com")));
     }
 
+    @Test
+    @DisplayName("POST /api/v1/identities/signup")
+    void testCreateUserIdentity() throws Exception {
+        // Setup our mocked service
+        String pattern = "dd-mm-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = simpleDateFormat.parse("12-01-1988");
+        var identityToPost = new SignUpRequest("userName", "P@ssw0rd2$", "P@ssw0rd2$","email@gmail.com", date);
+        var identityToReturn = new SignUpResponse(1L,"userName", "P@ssw0rd2$", "email@gmail.com", date);
+        var requestResponse = new GenericResponse<SignUpResponse>();
+        requestResponse.setData(identityToReturn);
+        requestResponse.setMessage("Identity created successfully");
+        doReturn(requestResponse).when(identityService).createUserIdentity(any());
+
+        // Execute the POST request
+        mockMvc.perform(post("/api/v1/identities/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(identityToPost)))
+
+                // Validate the response code and content type
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                // Validate headers
+                .andExpect(header().string(HttpHeaders.LOCATION, "/api/v1/identities/signup/1"))
+                .andExpect(header().string(HttpHeaders.ETAG, "\"1\""))
+
+                // Validate the returned fields
+                //.andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.data.userName", is("userName")))
+                .andExpect(jsonPath("$.data.email", is("email@gmail.com")));
+    }
+
+    @Test
+    @DisplayName("PUT /api/v1/identities/1")
+    void testUpdateAnIdentity() throws Exception {
+        // Setup our mocked service
+        String pattern = "dd-mm-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = simpleDateFormat.parse("12-01-1988");
+        var identityToPut = new SignUpRequest("userName", "P@ssw0rd2$", "P@ssw0rd2$","email@gmail.com", date);
+        var identityToReturnFindBy = new SignUpResponse(1L,"userName", "P@ssw0rd2$", "email@gmail.com", date);
+        var identityToReturnSave = new SignUpResponse(1L,"userName", "P@ssw0rd2$", "email1@gmail.com", date);
+        var requestResponse = new GenericResponse<SignUpResponse>();
+        requestResponse.setData(identityToReturnSave);
+        requestResponse.setMessage("Identity updated successfully");
+
+        doReturn(Optional.of(identityToReturnFindBy)).when(identityService.findIdentityById(1L));
+        doReturn(requestResponse).when(identityService.createUserIdentity(any()));
+
+        // Execute the POST request
+        mockMvc.perform(put("/api/v1/identities/{id}", 1l)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.IF_MATCH, 2)
+                        .content(asJsonString(identityToPut)))
+
+                // Validate the response code and content type
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                // Validate headers
+                .andExpect(header().string(HttpHeaders.LOCATION, "/api/v1/identities/1"))
+                .andExpect(header().string(HttpHeaders.ETAG, "\"email1@gmail.com\""))
+
+                // Validate the returned fields
+                .andExpect(jsonPath("$.data.id", is(1)))
+                .andExpect(jsonPath("$.data.userName", is("UserName")))
+                .andExpect(jsonPath("$.data.email", is("email1@gmail.com")));
+    }
+
+    static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

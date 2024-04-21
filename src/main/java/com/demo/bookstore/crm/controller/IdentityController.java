@@ -52,7 +52,7 @@ public class IdentityController {
 
         try {
             return ResponseEntity
-                    .created(new URI("/api/v1/identities/" + requestResponse.getData().id()))
+                    .created(new URI("/api/v1/identities/signup/" + requestResponse.getData().id()))
                     .eTag(Long.toString(requestResponse.getData().id()))
                     .body(requestResponse);
         } catch (URISyntaxException e) {
