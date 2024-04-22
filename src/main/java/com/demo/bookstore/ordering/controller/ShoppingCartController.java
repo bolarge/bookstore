@@ -2,6 +2,7 @@ package com.demo.bookstore.ordering.controller;
 
 import com.demo.bookstore.ordering.ItemRequest;
 import com.demo.bookstore.ordering.SalesOrder;
+import com.demo.bookstore.ordering.service.ShoppingCartService;
 import com.demo.bookstore.ordering.service.ShoppingCartServiceImpl;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("api/v1")
 @RestController
 public class ShoppingCartController {
-    private final ShoppingCartServiceImpl shoppingCartService;
+    private final ShoppingCartService shoppingCartService;
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @GetMapping("/shopping-cart")
     public ResponseEntity<?> getShoppingCartItems(){
