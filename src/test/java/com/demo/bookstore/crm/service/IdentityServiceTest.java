@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,7 +46,7 @@ public class IdentityServiceTest {
 
     @DisplayName("Tests createUserIdentity")
     @Test
-    public void identityService_CreateIdentity_ReturnsSignUpResponse(){
+    public void identityService_createUserIdentity(){
         var identity1 = new Identity(1L,"bigdaddy", "P@szw0rd2$", "bigdaddy@gmail.com");
 
         var identity2 = new SignUpRequest("userName", encoder.encode("P@ssw0rd2$"), "P@ssw0rd2$",
@@ -66,9 +67,38 @@ public class IdentityServiceTest {
 
         Assertions.assertThat(allIdentities).isNotNull();
     }
+    @DisplayName("Tests get user identity")
+    @Test
+    public void identityService_getAUserIdentity(){
+        var identity = new Identity(1L,"userName", encoder.encode("P@ssw0rd2$"), "P@ssw0rd2$");
+        when(identityRepository.findById(1l)).thenReturn(Optional.of(identity));
+
+        Optional<Identity> returnedIdentity = identityService.findIdentityById(1l);
+
+        // Assert the response
+        Assertions.assertThat(returnedIdentity.isPresent()).isTrue();
+        Assertions.assertThat(returnedIdentity.get()).isSameAs(identity);
+
+    }
+    @DisplayName("Tests get a user")
+    @Test
+    public void identityService_getAUser(){
+        var id = new Identity(1L, "user_name","password", "id@gmail.com");
+        var role = new Role(UserRole.ROLE_USER);
+        var userRole = new HashSet<Role>();
+        userRole.add(role);
+        var user = new User("firstName", "lastName", false, id,
+                userRole, UserType.CUSTOMER);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Optional<User> returnedUser = identityService.findUserById(1L);
+
+        Assertions.assertThat(returnedUser.isPresent()).isTrue();
+        Assertions.assertThat(returnedUser.get()).isSameAs(user);
+    }
     @DisplayName("Tests createUser")
     @Test
-    public void identityService_CreateUser(){
+    public void identityService_createUser(){
         //User Identity
         var identityId = 1L;
         var identity = new Identity(identityId,"userName", encoder.encode("P@ssw0rd2$"),
@@ -98,5 +128,30 @@ public class IdentityServiceTest {
 
         GenericResponse<UserRecord>  createdUserResponse = identityService.createUser(userRecord, identityId);
         Assertions.assertThat(createdUserResponse).isNotNull();
+    }
+    @DisplayName("Tests updateIdentity")
+    @Test
+    public void IdentityService_updateIdentity() {
+        var identityId = 1L;
+        var identity = new Identity(identityId,"userName", encoder.encode("P@ssw0rd2$"), "P@ssw0rd2$");
+        var identity1 = new Identity(identityId,"userName", encoder.encode("P@ssw0rd2$"), "P@ssw0rd2$");
+
+        when(identityRepository.findById(identityId)).thenReturn(Optional.of(identity));
+        when(identityRepository.save(identity)).thenReturn(identity);
+
+        var updateReturn = identityService.updateUserIdentity(identity1, identityId);
+
+        Assertions.assertThat(updateReturn).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Test findByIdentityId Not Found")
+    void IdentityService_findByIdNotFound() {
+        doReturn(Optional.empty()).when(identityRepository).findById(1l);
+
+        Optional<Identity> returnedIdentity = identityRepository.findById(1l);
+
+        // Assert the response
+        Assertions.assertThat(returnedIdentity.isPresent()).isFalse();
     }
 }

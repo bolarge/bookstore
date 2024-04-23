@@ -6,7 +6,6 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.4</version>
-		<!--<version>3.1.2</version>-->
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.demo</groupId>
@@ -24,9 +23,9 @@
 		<jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
 		<spotless.version>2.22.8</spotless.version>
 		<springboot.version>3.2.4</springboot.version>
-		<!--<springboot.version>3.1.2</springboot.version>-->
 		<spring-cloud.version>2021.0.3</spring-cloud.version>
-		<!--<spring-cloud.version>2022.0.2</spring-cloud.version> <version>2.2.9.RELEASE</version>-->
+		<spring-cloud.aws.version>3.1.1</spring-cloud.aws.version>
+		<!--<spring-cloud.version>2023.0.2</spring-cloud.version>-->
 
 		<!-- Maven plugins -->
 		<jacoco.version>0.8.8</jacoco.version>
@@ -75,6 +74,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<artifactId>spring-cloud-aws-starter</artifactId>
+		</dependency>
+
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-docker-compose</artifactId>
@@ -148,17 +152,6 @@
 		</dependency>
 		<!--
 		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest</artifactId>
-			<version>2.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
 			<version>2.7.0</version>
@@ -196,7 +189,15 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+			<dependency>
+				<groupId>io.awspring.cloud</groupId>
+				<artifactId>spring-cloud-aws-dependencies</artifactId>
+				<version>${spring-cloud.aws.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
+
 	</dependencyManagement>
 
 	<build>
@@ -214,13 +215,13 @@
 				</configuration>
 			</plugin>
 
-		<!--	<plugin>
+			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>${jib-maven-plugin.version}</version>
 				<configuration>
 					<container>
-						<mainClass>com.duplo.b2bplatform.B2BPlatformApplication</mainClass>
+						<mainClass>com.demo.bookstore.BookstoreApplication</mainClass>
 					</container>
 					<from>
 						<image>eopenjdk:17-ea-4-jre</image>
@@ -230,12 +231,11 @@
 						<credHelper>pass</credHelper>
 						<tags>
 							<tag>${project.version}</tag>
-							&lt;!&ndash;<tag>latest</tag>&ndash;&gt;
+							<!--<tag>latest</tag>-->
 						</tags>
 					</to>
 				</configuration>
-			</plugin>-->
-
+			</plugin>
 		</plugins>
 	</build>
 

@@ -96,13 +96,13 @@ public class IdentityController {
     @GetMapping("/identities/{id}")
     public ResponseEntity<?> getAnIdentity(@PathVariable Long id) {
         return identityService.findIdentityById(id)
-                .map(identityDto -> {
+                .map(identity -> {
                     try {
                         return ResponseEntity
                                 .ok()
-                                .eTag(Long.toString(identityDto.getId()))
-                                .location(new URI("/api/v1/identities/" + identityDto.getId()))
-                                .body(identityDto);
+                                .eTag(Long.toString(identity.getId()))
+                                .location(new URI("/api/v1/identities/" + identity.getId()))
+                                .body(identity);
                     } catch (URISyntaxException e) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
                     }

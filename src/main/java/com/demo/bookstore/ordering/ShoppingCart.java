@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-//@AllArgsConstructor
 @Getter
 @Setter
 @Embeddable
@@ -19,9 +18,7 @@ import java.util.List;
 public class ShoppingCart {
     @OneToMany
     private List<Item> items;
-    public ShoppingCart(){
-        this.items = new ArrayList<>();
-    }
+    public ShoppingCart(){}
 
     public ShoppingCart(List<Item> itemList){
         this.items = itemList;

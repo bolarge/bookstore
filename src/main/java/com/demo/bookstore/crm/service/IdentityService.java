@@ -19,4 +19,7 @@ public interface IdentityService {
     List<IdentityDTO> findAll();
     Iterable<User> fetchAllUsers();
     Optional<Identity> findIdentityById(Long identityId);
+    Optional<User> findUserById(Long userId);
+
+    GenericResponse<SignUpResponse> updateUserIdentity(Identity identity, Long id);
 }

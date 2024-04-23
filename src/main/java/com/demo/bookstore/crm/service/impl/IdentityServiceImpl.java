@@ -139,5 +139,28 @@ public class IdentityServiceImpl implements IdentityService {
         return Optional.ofNullable(identityRepository.findById(identityId).orElseThrow(() -> new ResourceNotFoundException("Identity could be found")));
     }
 
+    @Override
+    public Optional<User> findUserById(Long userId) {
+        return Optional.ofNullable(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User could not be found")));
+    }
+
+    @Override
+    public GenericResponse<SignUpResponse> updateUserIdentity(Identity identity, Long id) {
+            Optional<Identity> foundIdentity = Optional.ofNullable(identityRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Identity could not be updated")));
+            Identity updated = null;
+            if(foundIdentity.isPresent()){
+                 updated = new Identity(id, identity.getUsername(), identity.getPassword(), identity.getEmail(),
+                         identity.getDob());
+            }
+
+            updated = identityRepository.save(updated);
+            var requestResponse = new GenericResponse<SignUpResponse>();
+            SignUpResponse signUpResponse = mapToSignUpResponse(updated);
+            requestResponse.setData(signUpResponse);
+            requestResponse.setMessage("Identity was successfully updated");
+            return requestResponse;
+
+    }
+
 
 }
