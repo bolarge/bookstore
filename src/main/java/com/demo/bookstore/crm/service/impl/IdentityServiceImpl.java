@@ -52,7 +52,7 @@ public class IdentityServiceImpl implements IdentityService {
     @Override
     public GenericResponse<UserRecord> createUser(UserRecord userRecord, Long userIdentity) {
         Optional<Identity> queriedIdentity = identityRepository.findById(userIdentity);
-        Identity foundIdentity = queriedIdentity.orElseThrow();
+        Identity foundIdentity = queriedIdentity.orElseThrow(() -> new ResourceNotFoundException("Error: Identity not found."));
 
         Set<String> strRoles = userRecord.userRoles();
         Set<Role> roles = new HashSet<>();
