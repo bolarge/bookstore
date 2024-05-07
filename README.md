@@ -23,15 +23,21 @@ Customer Relationship Management: is the business process that manages informati
 
 Payment Integration: This is the functionality that facilitates making payment for purchase orders. The payment functionality enable customers to make payment using payment types such as USSD, Bank Transfer and Web Payment (Card)
 
-## System Requirements
+## Technology Stack
 * Java 21
 * Mysql 8
-* Maven
+* Maven 3.9
 * Springboot 3.2
 * Spring Web MVC
+* Spring Cloud Open Feign
+* Spring Cloud AWS
 * Spring Data JPA
+* Spring Security
+* JSON Web Token
 * Docker
 * Docker Compose
+
+## System Requirement
 
 ## Getting Started with Deployment
 Application is a monolith maven project with no internal sub modules. It inherits from springboot-parent 
@@ -42,26 +48,25 @@ from any mysql client terminal
 ```properties
 CREATE DATABASE bookstore_db;
 ```
-
 #### Run locally
-Start server using
 ```bash
 mvn spring-boot:run
 ```
-
-To view specs, visit http://localhost:8586/bookstore/swagger-ui/index.html
-
-#### Run locally via docker compose
 ##### Requirement: Ensure your Docker-daemon is up and running. Docker Desktop.
-```bash
-  cd bookstore
-  copy the compose.yml to the dir
-  docker compose up
-```
-
-##### Run Docker login
+##### login to Docker
 ```bash
     docker login -u <username>
 ```
-
+#### Run locally via docker compose
+```bash
+  docker pull bolarge/bookstore latest
+  docker compose up
+```
+#### Deploy and Run locally on Server
+```bash
+  mkdir "bookstore"
+  cd bookstore
+  java -jar bookstore-0.0.1-SNAPSHOT.jar
+```
+To view specs, visit http://localhost:8586/bookstore/swagger-ui/index.html
 
