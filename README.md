@@ -37,10 +37,10 @@ Payment Integration: This is the functionality that facilitates making payment f
 * Docker
 * Docker Compose
 
-## System Requirement
+# System Requirement
 
 ## Getting Started with Deployment
-Application is a monolith maven project with no internal sub modules. It inherits from springboot-parent 
+Application is a modular monolith maven project composed of sub modules. It inherits from springboot-parent 
 
 ### Database Setup
 Hibernate ddl.auto flag is set to update, therefore, bookstore_db database is to be created. Run below code
@@ -48,6 +48,10 @@ from any mysql client terminal
 ```properties
 CREATE DATABASE bookstore_db;
 ```
+Update the following in application.properties file
+* database account details
+* Update database connection string
+
 #### Run locally
 ```bash
 mvn spring-boot:run
