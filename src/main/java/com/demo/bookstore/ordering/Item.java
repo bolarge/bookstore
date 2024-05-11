@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Item extends BaseEntity {
     @JsonBackReference
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User customer;
     @ManyToOne
     private Book book;

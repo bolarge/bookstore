@@ -38,11 +38,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public ShoppingCart addItemsToCart(ItemRequest itemRequest) {
         User customer = null;
-        shoppingCart.setItems(itemList);
         Optional<User> foundUser = getAuthenticatedUser();
         if(foundUser.isPresent()){
             customer = foundUser.get().getIdentity().getUser();
         }
+        shoppingCart.setItems(itemList);
         Book book = getBook(itemRequest);
         Item anItem = new Item(book, itemRequest.quantity(), customer);
         anItem = itemRepository.save(anItem);
@@ -53,8 +53,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public List<Item> showCartItems() {
         Optional<User> foundUser = getAuthenticatedUser();
-       if(shoppingCart.getItems().size() == 0){
-           shoppingCart.getItems().addAll(itemRepository.findItemByCustomer(foundUser));
+       if(shoppingCart.getItems() == null){
+           List<Item> items = itemRepository.findItemByCustomer(foundUser);
+           if(items.size() > 0){
+               //shoppingCart.getItems().addAll(items);
+               shoppingCart.setItems(items);
+           }
        }
         return shoppingCart.getItems();
     }
@@ -99,12 +103,12 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public SalesOrder checkOutShoppingCart() {
         User customer = null;
         Optional<User> foundUser = getAuthenticatedUser();
-        BigDecimal totalAmount = getTotalAmount();
         if (foundUser.isPresent()){
             customer = foundUser.get().getIdentity().getUser();
         }
+        BigDecimal totalAmount = getTotalAmount();
         SalesOrder salesOrder = new SalesOrder(customer, OrderStatus.CHECKOUT, totalAmount, shoppingCart, PaymentStatus.PROCESSING,
-                null);
+                null, String.valueOf(System.currentTimeMillis()));
         salesOrder = salesOrderRepository.save(salesOrder);
 
         Payment newPayment = null;

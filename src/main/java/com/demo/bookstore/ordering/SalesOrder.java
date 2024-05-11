@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 public class SalesOrder extends BaseEntity {
     @JsonBackReference
     @ToString.Exclude
-    @OneToOne
+    @ManyToOne
     private User customer;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -35,6 +35,7 @@ public class SalesOrder extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "payment_id")
     private Payment payment;
+    private String orderId;
 
 
 

@@ -18,7 +18,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "authors")
 public class Author extends BaseEntity {
-
     @Column(unique = true)
     private String name;
     @Column(unique = true)
